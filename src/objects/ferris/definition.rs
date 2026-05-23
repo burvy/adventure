@@ -30,6 +30,17 @@ pub fn spawn_ferris(cmds: &mut Commands, asset_server: &Res<AssetServer>) {
             Dir3::NEG_Y,
         )
         .with_max_distance(0.15),
+        // we want to target the forward cast on each of the ferris entities
+        children![
+            ShapeCaster::new(
+                Collider::cuboid(1.0, 1.0, 1.0),
+                Vector::ZERO,
+                Quaternion::default(),
+                Dir3::NEG_Z,
+            )
+            .with_max_distance(5.0),
+            objects::definition::ForwardCast
+        ],
     ));
 }
 

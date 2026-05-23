@@ -1,9 +1,8 @@
-use bevy::prelude::*;
 use avian3d::prelude::*;
+use bevy::prelude::*;
 
-use crate::{almighty::definition::WantMove};
+use crate::almighty::definition::WantMove;
 use crate::objects;
-
 
 use trig_const::cos;
 
@@ -36,7 +35,9 @@ pub fn validate_jump(collisions: &ShapeHits) -> bool {
     })
 }
 /// Set things visible or invisible based on the custom visibility tag
-pub fn update_visibilities(visibilizables: Query<(&mut Visibility, &objects::definition::Visible)>) {
+pub fn update_visibilities(
+    visibilizables: Query<(&mut Visibility, &objects::definition::Visible)>,
+) {
     for (mut visibility, visibilizable) in visibilizables {
         *visibility = if visibilizable.0 {
             Visibility::Visible
@@ -48,8 +49,8 @@ pub fn update_visibilities(visibilizables: Query<(&mut Visibility, &objects::def
 
 /// Gives you a local horizontal movement vector.
 fn local_dir(want_move: &WantMove) -> Vec3 {
-    want_move.forward * (want_move.zinput as f32) +
-        Vec3::new(-want_move.forward.z, 0.0, want_move.forward.x) * (want_move.xinput as f32)
+    want_move.forward * (want_move.zinput as f32)
+        + Vec3::new(-want_move.forward.z, 0.0, want_move.forward.x) * (want_move.xinput as f32)
 }
 /// Returns the movement speed specified by WantMove for horizontal movement.
 fn get_speed(want_move: &WantMove) -> f32 {

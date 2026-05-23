@@ -8,57 +8,72 @@ use crate::objects::cash_register;
 use crate::objects::ferris;
 use crate::objects::hero;
 
+#[cfg(not(target_arch = "wasm32"))]
 use std::env;
 
 use avian3d::prelude::*;
 use bevy::prelude::*;
-use bevy::remote::http::DEFAULT_PORT;
-use bevy::remote::{RemotePlugin, http::RemoteHttpPlugin};
-use bevy::render::{
-    RenderPlugin,
-    settings::{Backends, WgpuSettings, WgpuSettingsPriority},
-};
 use bevy::window::WindowPlugin;
 use bevy::window::WindowResolution;
 
 use bevy_embedded_assets::EmbeddedAssetPlugin;
+#[cfg(not(target_arch = "wasm32"))]
+use bevy::render::{
+    settings::{Backends, WgpuSettings, WgpuSettingsPriority},
+    RenderPlugin,
+};
+#[cfg(not(target_arch = "wasm32"))]
+use bevy_remote::{
+    http::{RemoteHttpPlugin, DEFAULT_PORT},
+    RemotePlugin,
+};
 
 fn main() -> AppExit {
-    let port: u16 = env::args()
-        .nth(1)
-        .and_then(|arg| arg.parse().ok())
-        .unwrap_or(DEFAULT_PORT);
+    let default_plugins = DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+            title: "Adventure".into(),
+            resolution: WindowResolution::new(640, 360),
+            #[cfg(target_arch = "wasm32")]
+            canvas: Some("#adventure-canvas".into()),
+            #[cfg(target_arch = "wasm32")]
+            fit_canvas_to_parent: true,
+            ..default()
+        }),
+        ..default()
+    });
 
-    let default_plugins = DefaultPlugins
-        .set(RenderPlugin {
-            render_creation: (WgpuSettings {
-                backends: Some(Backends::VULKAN),
-                priority: WgpuSettingsPriority::Compatibility,
-                ..default()
-            })
-            .into(),
+    #[cfg(not(target_arch = "wasm32"))]
+    let default_plugins = default_plugins.set(RenderPlugin {
+        render_creation: (WgpuSettings {
+            backends: Some(Backends::VULKAN),
+            priority: WgpuSettingsPriority::Compatibility,
             ..default()
         })
-        .set(WindowPlugin {
-            primary_window: Some(Window {
-                resolution: WindowResolution::new(640, 360),
-                title: "My Bevy App".to_string(),
-                ..default()
-            }),
-            ..default()
-        });
+        .into(),
+        ..default()
+    });
 
-    App::new()
-        .add_plugins((
-            EmbeddedAssetPlugin {
-                mode: bevy_embedded_assets::PluginMode::ReplaceDefault,
-            },
-            default_plugins,
-        ))
-        .add_plugins(MainPlugin)
-        .add_plugins(RemotePlugin::default())
-        .add_plugins(RemoteHttpPlugin::default().with_port(port))
-        .run()
+    let mut app = App::new();
+    app.add_plugins((
+        EmbeddedAssetPlugin {
+            mode: bevy_embedded_assets::PluginMode::ReplaceDefault,
+        },
+        default_plugins,
+    ));
+    app.add_plugins(MainPlugin);
+
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let port: u16 = env::args()
+            .nth(1)
+            .and_then(|arg| arg.parse().ok())
+            .unwrap_or(DEFAULT_PORT);
+
+        app.add_plugins(RemotePlugin::default());
+        app.add_plugins(RemoteHttpPlugin::default().with_port(port));
+    }
+
+    app.run()
 }
 
 /// The bare minimum essential functions to run this game.

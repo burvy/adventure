@@ -1,13 +1,17 @@
-use bevy::prelude::*;
 use avian3d::prelude::*;
+use bevy::prelude::*;
 
-use crate::{almighty::definition::WantMove, objects};
 use crate::almighty;
+use crate::{almighty::definition::WantMove, objects};
 
 /// Move Ferrises
 pub fn update_ferris(
-    mut ferrises: Query<(&mut Transform, &mut WantMove, &ShapeHits), Without<objects::definition::Target>>,
+    mut ferrises: Query<
+        (&mut Transform, &mut WantMove, &ShapeHits),
+        Without<objects::definition::Target>,
+    >,
     targets: Query<&Transform, With<objects::definition::Target>>,
+    mut raycasts: Query<&mut ShapeHits, With<objects::definition::ForwardCast>>,
 ) {
     // for each ferris
     for (mut ferris_transform, mut want_move, collisions) in &mut ferrises {
@@ -25,8 +29,10 @@ pub fn update_ferris(
             want_move.xinput = 0;
             continue;
         };
-
+        // let (twist, hit) = twist_direction(&mut raycasts);
+        // TODO: Allow this to change based on if the forward raycast hits something.
         let mut direction = target_transform.translation - ferris_transform.translation;
+
         // Ferris jump, with jump validation
         if direction.y > 2.0 && almighty::logic::validate_jump(collisions) {
             want_move.jump = true;
@@ -52,4 +58,9 @@ pub fn update_ferris(
 pub fn click_ferris(entity: Entity, cmds: &mut Commands) {
     info!("Ferris Clicked");
     cmds.entity(entity).despawn();
+}
+
+pub fn twist_direction(raycasts: &mut ShapeHits) -> (Dir3, bool) {
+    let direction = Dir3::new(Vec3::NEG_Z);
+    (direction.unwrap(), true)
 }
