@@ -11,7 +11,4 @@ pub enum Thing {
 pub struct Target;
 
 #[derive(Component)]
-pub struct ForwardCast;
-
-#[derive(Component)]
 pub struct Visible(pub bool);
