@@ -90,7 +90,7 @@ impl Plugin for MainPlugin {
                 ui::crosshair::spawn_crosshair,
             ),
         );
-        app.add_observer(ferris::definition::spawn_ferrises);
+        app.add_systems(Startup, ferris::definition::setup_ferris);
         app.add_observer(build_cube::spawn_physics_cube);
         app.add_systems(
             Update,
