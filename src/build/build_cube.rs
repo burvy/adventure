@@ -14,18 +14,27 @@ impl SpawnCubeEvent {
     }
 }
 
-/// Spawns a rigidbody cube at these coordinates.
-pub fn spawn_physics_cube_at(
-    cmds: &mut Commands,
-    mesh: &mut Assets<Mesh>,
-    mats: &mut Assets<StandardMaterial>,
-    x: f32,
-    y: f32,
-    z: f32,
+#[derive(Resource)]
+pub struct Oube {
+    pub mesh: Handle<Mesh>,
+    pub mats: Handle<StandardMaterial>,
+}
+pub fn setup_oube(
+    mut cmds: Commands,
+    mut mesh: ResMut<Assets<Mesh>>,
+    mut mats: ResMut<Assets<StandardMaterial>>,
 ) {
+    cmds.insert_resource(Oube {
+        mesh: mesh.add(Cuboid::new(1.0, 1.0, 1.0)),
+        mats: mats.add(Color::srgb_u8(255, 102, 0)),
+    });
+}
+
+/// Spawns a rigidbody cube at these coordinates.
+pub fn spawn_oube(cmds: &mut Commands, oube: &Oube, x: f32, y: f32, z: f32) {
     cmds.spawn((
-        Mesh3d(mesh.add(Cuboid::new(1.0, 1.0, 1.0))),
-        MeshMaterial3d(mats.add(Color::srgb_u8(255, 102, 0))),
+        Mesh3d(oube.mesh.clone()),
+        MeshMaterial3d(oube.mats.clone()),
         Transform::from_xyz(x, y, z),
         Collider::cuboid(1.0, 1.0, 1.0),
         RigidBody::Dynamic,
@@ -33,16 +42,10 @@ pub fn spawn_physics_cube_at(
 }
 
 /// Spawns a cube through SpawnCubeEvent.
-pub fn spawn_physics_cube(
-    event: On<SpawnCubeEvent>,
-    mut cmds: Commands,
-    mut mesh: ResMut<Assets<Mesh>>,
-    mut mats: ResMut<Assets<StandardMaterial>>,
-) {
-    spawn_physics_cube_at(
+pub fn spawn_physics_cube(event: On<SpawnCubeEvent>, mut cmds: Commands, oube: Res<Oube>) {
+    spawn_oube(
         &mut cmds,
-        &mut mesh,
-        &mut mats,
+        &oube,
         event.position.x,
         event.position.y,
         event.position.z,

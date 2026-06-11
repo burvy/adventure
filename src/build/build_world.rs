@@ -1,7 +1,6 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use crate::build;
 use crate::cash_register;
 use crate::hero;
 
@@ -14,8 +13,6 @@ pub fn build_lobby(
 ) {
     // "hero"
     hero::definition::spawn_hero(&mut cmds, &mut mesh, &mut mats);
-
-    build::build_cube::spawn_physics_cube_at(&mut cmds, &mut mesh, &mut mats, 2.0, 3.0, 22.0);
 
     cash_register::definition::build_cash_register(&mut cmds, &asset_server);
 

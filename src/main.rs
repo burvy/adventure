@@ -16,12 +16,12 @@ use bevy::prelude::*;
 use bevy::window::WindowPlugin;
 use bevy::window::WindowResolution;
 
-use bevy_embedded_assets::EmbeddedAssetPlugin;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::render::{
     settings::{Backends, WgpuSettings, WgpuSettingsPriority},
     RenderPlugin,
 };
+use bevy_embedded_assets::EmbeddedAssetPlugin;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy_remote::{
     http::{RemoteHttpPlugin, DEFAULT_PORT},
@@ -86,6 +86,7 @@ impl Plugin for MainPlugin {
             Startup,
             (
                 build::build_world::build_lobby,
+                build::build_cube::setup_oube,
                 ui::crosshair::spawn_crosshair,
             ),
         );
