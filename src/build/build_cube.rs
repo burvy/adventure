@@ -23,10 +23,14 @@ pub fn setup_oube(
     mut cmds: Commands,
     mut mesh: ResMut<Assets<Mesh>>,
     mut mats: ResMut<Assets<StandardMaterial>>,
+    asset_server: Res<AssetServer>,
 ) {
     cmds.insert_resource(Oube {
-        mesh: mesh.add(Cuboid::new(1.0, 1.0, 1.0)),
-        mats: mats.add(Color::srgb_u8(255, 102, 0)),
+        mesh: mesh.add(Cuboid::new(2.0, 2.0, 2.0)),
+        mats: mats.add(StandardMaterial {
+            base_color_texture: Some(asset_server.load("images/boxtexture.jpeg")),
+            ..default()
+        }),
     });
 }
 
@@ -35,8 +39,8 @@ pub fn spawn_oube(cmds: &mut Commands, oube: &Oube, pos: Vec3) {
     cmds.spawn((
         Mesh3d(oube.mesh.clone()),
         MeshMaterial3d(oube.mats.clone()),
-        Transform::from_xyz(pos.x, pos.y, pos.z),
-        Collider::cuboid(1.0, 1.0, 1.0),
+        Transform::from_xyz(pos.x, pos.y + 2.0, pos.z),
+        Collider::cuboid(2.0, 2.0, 2.0),
         RigidBody::Dynamic,
     ));
 }

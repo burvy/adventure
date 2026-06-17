@@ -5,6 +5,7 @@ use bevy::prelude::*;
 pub struct Paper {
     pub mesh: Handle<Mesh>,
     pub mats: Handle<StandardMaterial>,
+    pub size: Vec3,
 }
 
 pub fn setup_paper(
@@ -15,6 +16,7 @@ pub fn setup_paper(
     cmds.insert_resource(Paper {
         mesh: mesh.add(Cuboid::new(2.0, 4.0, 0.5)),
         mats: mats.add(Color::srgb_u8(255, 255, 255)),
+        size: Vec3::new(2.0, 4.0, 0.5),
     })
 }
 
@@ -24,13 +26,13 @@ pub fn build_papers(cmds: &mut Commands, paper: &Paper, pos: Vec3) {
         Mesh3d(paper.mesh.clone()),
         MeshMaterial3d(paper.mats.clone()),
         Transform::from_xyz(pos.x, pos.y + 2.5, pos.z),
-        Collider::cuboid(1.0, 1.0, 1.0),
+        Collider::cuboid(paper.size.x, paper.size.y, paper.size.z),
         RigidBody::Dynamic,
     ));
 }
 
 pub fn initialize_papers(mut cmds: Commands, paper: Res<Paper>) {
-    (0..25).for_each(|_| {
+    (0..50).for_each(|_| {
         build_papers(
             &mut cmds,
             &paper,

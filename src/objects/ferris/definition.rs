@@ -23,7 +23,7 @@ pub fn spawn_ferris(cmds: &mut Commands, ferris: &Ferris) {
     cmds.spawn((
         SceneRoot(ferris.scene.clone()),
         Collider::cuboid(3.0, 3.0, 3.0),
-        Transform::from_xyz(0.0, 20.0, 0.0).with_scale(Vec3::new(0.1, 0.1, 0.1)),
+        Transform::from_xyz(0.0, 20.0, 0.0).with_scale(Vec3::new(0.25, 0.25, 0.25)),
         Visibility::default(),
         RigidBody::Dynamic,
         objects::definition::Thing::Ferris,
