@@ -38,7 +38,7 @@ pub fn spawn_ferris(cmds: &mut Commands, ferris: &Ferris) {
 }
 
 pub fn spawn_ferrises(_event: On<SpawnFerrisesEvent>, mut cmds: Commands, ferris: Res<Ferris>) {
-    for _ in 0..25 {
+    for _ in 0..10 {
         spawn_ferris(&mut cmds, &ferris);
     }
 }

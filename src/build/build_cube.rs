@@ -31,11 +31,11 @@ pub fn setup_oube(
 }
 
 /// Spawns a rigidbody cube at these coordinates.
-pub fn spawn_oube(cmds: &mut Commands, oube: &Oube, x: f32, y: f32, z: f32) {
+pub fn spawn_oube(cmds: &mut Commands, oube: &Oube, pos: Vec3) {
     cmds.spawn((
         Mesh3d(oube.mesh.clone()),
         MeshMaterial3d(oube.mats.clone()),
-        Transform::from_xyz(x, y, z),
+        Transform::from_xyz(pos.x, pos.y, pos.z),
         Collider::cuboid(1.0, 1.0, 1.0),
         RigidBody::Dynamic,
     ));
@@ -43,11 +43,5 @@ pub fn spawn_oube(cmds: &mut Commands, oube: &Oube, x: f32, y: f32, z: f32) {
 
 /// Spawns a cube through SpawnCubeEvent.
 pub fn spawn_physics_cube(event: On<SpawnCubeEvent>, mut cmds: Commands, oube: Res<Oube>) {
-    spawn_oube(
-        &mut cmds,
-        &oube,
-        event.position.x,
-        event.position.y,
-        event.position.z,
-    );
+    spawn_oube(&mut cmds, &oube, event.position);
 }

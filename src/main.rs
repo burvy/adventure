@@ -7,6 +7,7 @@ use crate::build::build_cube;
 use crate::objects::cash_register;
 use crate::objects::ferris;
 use crate::objects::hero;
+use crate::objects::paper;
 
 #[cfg(not(target_arch = "wasm32"))]
 use std::env;
