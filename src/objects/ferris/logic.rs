@@ -1,16 +1,17 @@
-use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use crate::almighty;
 use crate::{almighty::definition::WantMove, objects};
+
+const TURN_SPEED: f32 = 1.0;
 
 /// Same as update_ferris but uses idiomatic rust
 pub fn update_ferris(
+    time: Res<Time>,
     mut ferrises: Query<(&mut Transform, &mut WantMove), Without<objects::definition::Target>>,
     targets: Query<&Transform, With<objects::definition::Target>>,
 ) {
     ferrises.iter_mut().for_each(|(mut ftf, mut wm)| {
-        let Some(target_transform) = targets.iter().min_by(|target_a, target_b| {
+        let Some(ttf) = targets.iter().min_by(|target_a, target_b| {
             ftf.translation
                 .distance_squared(target_a.translation)
                 .total_cmp(&ftf.translation.distance_squared(target_b.translation))
@@ -19,20 +20,31 @@ pub fn update_ferris(
             wm.xinput = 0;
             return;
         };
-        let mut direction = target_transform.translation - ftf.translation;
 
-        direction.y = 0.0;
+        let mut pdir = ttf.translation - ftf.translation;
+        pdir.y = 0.0;
 
-        ftf.look_to(direction, Vec3::Y); // look at them
-        ftf.rotate_y(std::f32::consts::PI); // rotate 180
-
-        if direction.length_squared() <= 2.0 {
+        if pdir.length_squared() <= 16.0 {
             wm.zinput = 0;
             wm.xinput = 0;
+            // TODO: detect grounded before jumping
+            wm.jump = true;
             return;
         }
 
-        wm.forward = direction.normalize();
+        let pdir = pdir.normalize();
+
+        // flip bc bevy models are flipped
+        let target_rotation = (Quat::from_rotation_y(std::f32::consts::PI)
+            * Transform::default().looking_to(pdir, Vec3::Y).rotation)
+            .normalize();
+
+        let rot_prog = (TURN_SPEED * time.delta_secs()).clamp(0.0, 1.0);
+
+        ftf.rotation = ftf.rotation.slerp(target_rotation, rot_prog);
+
+        // also flipped bc bevy models are flipped
+        wm.forward = -ftf.forward().as_vec3();
         wm.zinput = 1;
         wm.xinput = 0;
     });
