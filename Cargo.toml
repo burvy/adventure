@@ -9,6 +9,7 @@ bevy = { version = "0.18", features = ["jpeg"] }
 bevy_embedded_assets = "0.15.0"
 bevy_mod_raycast = "0.18.0"
 log = { version = "0.4", features = ["max_level_debug", "release_max_level_warn"] }
+rand = "0.10.1"
 tracing = { version = "0.1", features = ["max_level_debug", "release_max_level_warn"] }
 trig-const = "0.4.0"
 

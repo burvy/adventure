@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use crate::objects;
 
 #[derive(Resource)]
-struct Paper {
+pub struct Paper {
     pub mesh: Handle<Mesh>,
     pub mats: Handle<StandardMaterial>,
 }
@@ -22,5 +22,21 @@ pub fn setup_paper(
 
 // Paper builder
 pub fn build_papers(cmds: &mut Commands, paper: &Paper, pos: Vec3) {
-    todo!("Make paper collectible")
+    cmds.spawn((
+        Mesh3d(paper.mesh.clone()),
+        MeshMaterial3d(paper.mats.clone()),
+        Transform::from_xyz(pos.x, pos.y + 2.5, pos.z),
+        Collider::cuboid(1.0, 1.0, 1.0),
+        RigidBody::Dynamic,
+    ));
+}
+
+pub fn initialize_papers(cmds: &mut Commands, paper: Res<Paper>) {
+    (0..25).for_each(|_| {
+        build_papers(
+            cmds,
+            &paper,
+            rand::random_range::<Vec3>(Vec3::new(-25.0, 0.0, -25.0)..Vec3::new(25.0, 0.0, 25.0)),
+        )
+    })
 }
