@@ -1,8 +1,6 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use crate::objects;
-
 #[derive(Resource)]
 pub struct Paper {
     pub mesh: Handle<Mesh>,
@@ -31,12 +29,16 @@ pub fn build_papers(cmds: &mut Commands, paper: &Paper, pos: Vec3) {
     ));
 }
 
-pub fn initialize_papers(cmds: &mut Commands, paper: Res<Paper>) {
+pub fn initialize_papers(mut cmds: Commands, paper: Res<Paper>) {
     (0..25).for_each(|_| {
         build_papers(
-            cmds,
+            &mut cmds,
             &paper,
-            rand::random_range::<Vec3>(Vec3::new(-25.0, 0.0, -25.0)..Vec3::new(25.0, 0.0, 25.0)),
+            Vec3 {
+                x: rand::random_range(-25.0..25.0),
+                y: 0.0,
+                z: rand::random_range(-25.0..25.0),
+            },
         )
-    })
+    });
 }

@@ -92,6 +92,11 @@ impl Plugin for MainPlugin {
             ),
         );
         app.add_systems(Startup, ferris::definition::setup_ferris);
+        app.add_systems(Startup, paper::definition::setup_paper);
+        app.add_systems(
+            Startup,
+            paper::definition::initialize_papers.after(paper::definition::setup_paper),
+        );
         app.add_observer(build_cube::spawn_physics_cube);
         app.add_observer(ferris::definition::spawn_ferrises);
         app.add_systems(
