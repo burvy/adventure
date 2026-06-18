@@ -1,16 +1,24 @@
+use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use crate::{almighty::definition::WantMove, objects};
+use crate::{almighty, objects};
 
 const TURN_SPEED: f32 = 1.0;
 
 /// Same as update_ferris but uses idiomatic rust
 pub fn update_ferris(
     time: Res<Time>,
-    mut ferrises: Query<(&mut Transform, &mut WantMove), Without<objects::definition::Target>>,
+    mut ferrises: Query<
+        (
+            &mut Transform,
+            &mut almighty::definition::WantMove,
+            &ShapeHits,
+        ),
+        Without<objects::definition::Target>,
+    >,
     targets: Query<&Transform, With<objects::definition::Target>>,
 ) {
-    ferrises.iter_mut().for_each(|(mut ftf, mut wm)| {
+    ferrises.iter_mut().for_each(|(mut ftf, mut wm, sh)| {
         let Some(ttf) = targets.iter().min_by(|target_a, target_b| {
             ftf.translation
                 .distance_squared(target_a.translation)
@@ -28,7 +36,9 @@ pub fn update_ferris(
             wm.zinput = 0;
             wm.xinput = 0;
             // TODO: detect grounded before jumping
-            wm.jump = true;
+            if almighty::logic::validate_jump(sh) {
+                wm.jump = true;
+            }
             return;
         }
 
