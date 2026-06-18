@@ -1,9 +1,9 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use crate::objects;
+use crate::objects::{self, cash_register::logic};
 
-pub fn build_cash_register(cmds: &mut Commands, asset_server: &Res<AssetServer>) {
+pub fn spawn_cash_register(cmds: &mut Commands, asset_server: &AssetServer) {
     cmds.spawn((
         SceneRoot(asset_server.load("models/register.glb#Scene0")),
         Collider::cuboid(1.0, 1.0, 1.0),
@@ -19,7 +19,9 @@ pub fn build_cash_register(cmds: &mut Commands, asset_server: &Res<AssetServer>)
             z: 23.0,
         }),
         Visibility::default(),
-        objects::definition::Thing::CashRegister,
+        objects::definition::Interactable {
+            on_click: logic::on_click,
+        },
         RigidBody::Static,
         children![(
             PointLight {

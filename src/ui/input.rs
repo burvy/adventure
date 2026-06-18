@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::*;
 
-use crate::hero;
+use crate::objects::hero;
 
 use crate::KeyCode::Escape;
 
@@ -10,7 +10,7 @@ pub fn toggle_pause(
     cursor: Single<&mut CursorOptions, With<PrimaryWindow>>,
     mut hero: Single<&mut hero::definition::Hero, With<hero::definition::Hero>>,
     window: Single<&mut Window, With<PrimaryWindow>>,
-    keys: Res<ButtonInput<KeyCode>>
+    keys: Res<ButtonInput<KeyCode>>,
 ) {
     if keys.just_pressed(Escape) {
         hero.paused = !hero.paused;
@@ -28,7 +28,7 @@ fn pause(mut cursor: Single<&mut CursorOptions, With<PrimaryWindow>>) {
 /// Actions to do if unpaused
 fn play(
     mut cursor: Single<&mut CursorOptions, With<PrimaryWindow>>,
-    mut window: Single<&mut Window, With<PrimaryWindow>>
+    mut window: Single<&mut Window, With<PrimaryWindow>>,
 ) {
     let center = Some(window_center(&window));
 
@@ -41,4 +41,3 @@ fn play(
 fn window_center(window: &Window) -> Vec2 {
     Vec2::new(window.width() / 2.0, window.height() / 2.0)
 }
-

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 /// A struct to indicate where an entity wants to move.
-#[derive(Component)] 
+#[derive(Component)]
 pub struct WantMove {
     pub zinput: i8,
     pub xinput: i8,

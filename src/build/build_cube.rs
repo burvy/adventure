@@ -19,19 +19,27 @@ pub struct Oube {
     pub mesh: Handle<Mesh>,
     pub mats: Handle<StandardMaterial>,
 }
-pub fn setup_oube(
-    mut cmds: Commands,
-    mut mesh: ResMut<Assets<Mesh>>,
-    mut mats: ResMut<Assets<StandardMaterial>>,
-    asset_server: Res<AssetServer>,
-) {
-    cmds.insert_resource(Oube {
-        mesh: mesh.add(Cuboid::new(2.0, 2.0, 2.0)),
-        mats: mats.add(StandardMaterial {
-            base_color_texture: Some(asset_server.load("images/boxtexture.jpeg")),
-            ..default()
-        }),
-    });
+
+impl FromWorld for Oube {
+    fn from_world(world: &mut World) -> Self {
+        let texture = {
+            let asset_server = world.resource::<AssetServer>();
+            asset_server.load("images/boxtexture.jpeg")
+        };
+        let mesh = {
+            let mut mesh_assets = world.resource_mut::<Assets<Mesh>>();
+            mesh_assets.add(Cuboid::new(2.0, 2.0, 2.0))
+        };
+        let mats = {
+            let mut material_assets = world.resource_mut::<Assets<StandardMaterial>>();
+            material_assets.add(StandardMaterial {
+                base_color_texture: Some(texture),
+                ..default()
+            })
+        };
+
+        Self { mesh, mats }
+    }
 }
 
 /// Spawns a rigidbody cube at these coordinates.

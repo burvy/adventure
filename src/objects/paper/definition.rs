@@ -8,16 +8,23 @@ pub struct Paper {
     pub size: Vec3,
 }
 
-pub fn setup_paper(
-    mut cmds: Commands,
-    mut mesh: ResMut<Assets<Mesh>>,
-    mut mats: ResMut<Assets<StandardMaterial>>,
-) {
-    cmds.insert_resource(Paper {
-        mesh: mesh.add(Cuboid::new(2.0, 4.0, 0.5)),
-        mats: mats.add(Color::srgb_u8(255, 255, 255)),
-        size: Vec3::new(2.0, 4.0, 0.5),
-    })
+impl FromWorld for Paper {
+    fn from_world(world: &mut World) -> Self {
+        let mesh = {
+            let mut mesh_assets = world.resource_mut::<Assets<Mesh>>();
+            mesh_assets.add(Cuboid::new(2.0, 4.0, 0.5))
+        };
+        let mats = {
+            let mut material_assets = world.resource_mut::<Assets<StandardMaterial>>();
+            material_assets.add(Color::srgb_u8(255, 255, 255))
+        };
+
+        Self {
+            mesh,
+            mats,
+            size: Vec3::new(2.0, 4.0, 0.5),
+        }
+    }
 }
 
 // Paper builder

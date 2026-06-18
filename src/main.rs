@@ -3,15 +3,12 @@ mod build;
 mod objects;
 mod ui;
 
-use crate::build::build_cube;
-use crate::objects::cash_register;
-use crate::objects::ferris;
-use crate::objects::hero;
-use crate::objects::paper;
-
 #[cfg(not(target_arch = "wasm32"))]
 use std::env;
 
+use crate::almighty::AlmightyPlugin;
+use crate::build::BuildPlugin;
+use crate::objects::ObjectsPlugin;
 use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy::window::WindowPlugin;
@@ -19,14 +16,14 @@ use bevy::window::WindowResolution;
 
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::render::{
-    settings::{Backends, WgpuSettings, WgpuSettingsPriority},
     RenderPlugin,
+    settings::{Backends, WgpuSettings, WgpuSettingsPriority},
 };
 use bevy_embedded_assets::EmbeddedAssetPlugin;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy_remote::{
-    http::{RemoteHttpPlugin, DEFAULT_PORT},
     RemotePlugin,
+    http::{DEFAULT_PORT, RemoteHttpPlugin},
 };
 
 fn main() -> AppExit {
@@ -82,36 +79,9 @@ pub struct MainPlugin;
 impl Plugin for MainPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(PhysicsPlugins::default());
+        app.add_plugins((BuildPlugin, ObjectsPlugin, AlmightyPlugin));
         app.insert_resource(Gravity(Vec3::NEG_Y * 30.0));
-        app.add_systems(
-            Startup,
-            (
-                build::build_world::build_lobby,
-                build::build_cube::setup_oube,
-                ui::crosshair::spawn_crosshair,
-            ),
-        );
-        app.add_systems(Startup, ferris::definition::setup_ferris);
-        app.add_systems(Startup, paper::definition::setup_paper);
-        app.add_systems(
-            Startup,
-            paper::definition::initialize_papers.after(paper::definition::setup_paper),
-        );
-        app.add_observer(build_cube::spawn_physics_cube);
-        app.add_observer(ferris::definition::spawn_ferrises);
-        app.add_systems(
-            Update,
-            (
-                hero::control::hero_input, // paramount importance
-                hero::control::hero_left_click,
-                hero::control::read_camera,
-                hero::control::update_body.after(hero::control::read_camera),
-                hero::control::update_camera.after(hero::control::read_camera),
-                ferris::logic::update_ferris, // ferris logic
-                ui::input::toggle_pause,
-                almighty::logic::update_visibilities,
-                almighty::logic::move_all,
-            ),
-        );
+        app.add_systems(Startup, ui::crosshair::spawn_crosshair);
+        app.add_systems(Update, ui::input::toggle_pause);
     }
 }

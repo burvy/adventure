@@ -5,7 +5,6 @@ use crate::{almighty, objects};
 
 const TURN_SPEED: f32 = 1.0;
 
-/// Same as update_ferris but uses idiomatic rust
 pub fn update_ferris(
     time: Res<Time>,
     mut ferrises: Query<
@@ -61,7 +60,7 @@ pub fn update_ferris(
 }
 
 /// Logic for when Ferris is clicked
-pub fn click_ferris(entity: Entity, cmds: &mut Commands) {
+pub fn on_click(world: &mut World, entity: Entity) {
     info!("Ferris Clicked");
-    cmds.entity(entity).despawn();
+    world.despawn(entity);
 }

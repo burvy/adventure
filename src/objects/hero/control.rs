@@ -1,5 +1,3 @@
-use crate::hero::logic;
-
 use bevy::input::mouse::AccumulatedMouseMotion;
 use bevy::prelude::KeyCode::{KeyA, KeyD, KeyS, KeyW, Space};
 use bevy::prelude::*;
@@ -11,8 +9,7 @@ use crate::almighty::definition::WantMove;
 use crate::objects::hero::definition::Hero;
 use crate::objects::hero::definition::HeroBody;
 use crate::objects::hero::definition::HeroCamera;
-
-use crate::hero;
+use crate::objects::hero::logic;
 
 use crate::objects;
 
@@ -40,14 +37,12 @@ pub fn hero_input(
 pub fn hero_left_click(
     mut cmds: Commands,
     click: Res<ButtonInput<MouseButton>>,
-    cast: Single<(&RayCaster, &RayHits), With<hero::definition::DebugTool>>,
-    interacts: Query<&objects::definition::Thing>,
-    children_q: Query<&Children>,
-    mut visibles: Query<&mut objects::definition::Visible>,
+    cast: Single<(&RayCaster, &RayHits), With<crate::objects::hero::definition::DebugTool>>,
+    interacts: Query<&objects::definition::Interactable>,
 ) {
     if click.just_pressed(MouseButton::Left) {
         let (ray, hits) = &*cast;
-        logic::on_click(ray, hits, &mut cmds, &interacts, &children_q, &mut visibles);
+        logic::on_click(ray, hits, &mut cmds, &interacts);
     }
 }
 

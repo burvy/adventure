@@ -1,10 +1,8 @@
 use bevy::prelude::*;
 
-#[derive(Component)]
-/// List of different interaction enumerations.
-pub enum Thing {
-    CashRegister,
-    Ferris,
+#[derive(Component, Clone, Copy)]
+pub struct Interactable {
+    pub on_click: fn(&mut World, Entity),
 }
 
 #[derive(Component)]

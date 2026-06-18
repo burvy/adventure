@@ -3,7 +3,6 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::almighty::definition::WantMove;
-use crate::hero;
 use crate::objects;
 
 /// A tag to identify the singular hero. Every player is a hero in their own instance.
@@ -87,7 +86,7 @@ pub fn spawn_hero(
             forward: Vec3::ZERO,
             move_speed: 10.0,
         },
-        hero::definition::Hero {
+        Hero {
             paused: true,
             sens: Vec2 { x: 0.01, y: 0.01 },
             pitch: 0.0,

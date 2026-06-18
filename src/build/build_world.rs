@@ -1,8 +1,7 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use crate::cash_register;
-use crate::hero;
+use crate::objects::{cash_register, hero};
 
 /// Construct the default environment to spawn in.
 pub fn build_lobby(
@@ -14,7 +13,7 @@ pub fn build_lobby(
     // "hero"
     hero::definition::spawn_hero(&mut cmds, &mut mesh, &mut mats);
 
-    cash_register::definition::build_cash_register(&mut cmds, &asset_server);
+    cash_register::definition::spawn_cash_register(&mut cmds, &asset_server);
 
     // fps map
     cmds.spawn((

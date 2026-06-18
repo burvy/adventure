@@ -3,7 +3,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::almighty::definition::WantMove;
-use crate::objects;
+use crate::objects::{self, ferris::logic};
 
 #[derive(Event)]
 pub struct SpawnFerrisesEvent;
@@ -14,11 +14,15 @@ pub struct Ferris {
     pub bounds: Vec3,
 }
 
-pub fn setup_ferris(mut cmds: Commands, asset_server: Res<AssetServer>) {
-    cmds.insert_resource(Ferris {
-        scene: asset_server.load("models/crab.glb#Scene0"),
-        bounds: Vec3::new(3.0, 2.0, 3.0),
-    });
+impl FromWorld for Ferris {
+    fn from_world(world: &mut World) -> Self {
+        let asset_server = world.resource::<AssetServer>();
+
+        Self {
+            scene: asset_server.load("models/crab.glb#Scene0"),
+            bounds: Vec3::new(3.0, 2.0, 3.0),
+        }
+    }
 }
 
 pub fn spawn_ferris(cmds: &mut Commands, ferris: &Ferris) {
@@ -28,7 +32,9 @@ pub fn spawn_ferris(cmds: &mut Commands, ferris: &Ferris) {
         Transform::from_xyz(0.0, 20.0, 0.0).with_scale(Vec3::new(0.15, 0.15, 0.15)),
         Visibility::default(),
         RigidBody::Dynamic,
-        objects::definition::Thing::Ferris,
+        objects::definition::Interactable {
+            on_click: logic::on_click,
+        },
         WantMove {
             zinput: 0,
             xinput: 0,
