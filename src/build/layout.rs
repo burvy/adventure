@@ -15,10 +15,25 @@ pub struct StaticScenePlacement {
     pub transform: Transform,
 }
 
+#[derive(Clone)]
+pub struct ScatterRegion {
+    pub count: usize,
+    pub min: Vec3,
+    pub max: Vec3,
+}
+
+#[derive(Clone)]
+pub struct RepeatedTransformPlacement {
+    pub count: usize,
+    pub transform: Transform,
+}
+
 #[derive(Resource)]
 pub struct LobbyLayout {
     hero_spawns: Vec<Transform>,
     cash_register_spawns: Vec<Transform>,
+    paper_scatter_regions: Vec<ScatterRegion>,
+    ferris_spawn_groups: Vec<RepeatedTransformPlacement>,
     static_scenes: Vec<StaticScenePlacement>,
 }
 
@@ -40,6 +55,34 @@ impl LobbyLayout {
         &self.cash_register_spawns
     }
 
+    pub fn sample_paper_spawns(&self) -> Vec<Vec3> {
+        let mut spawns = Vec::new();
+
+        for region in &self.paper_scatter_regions {
+            for _ in 0..region.count {
+                spawns.push(Vec3::new(
+                    sample_component(region.min.x, region.max.x),
+                    sample_component(region.min.y, region.max.y),
+                    sample_component(region.min.z, region.max.z),
+                ));
+            }
+        }
+
+        spawns
+    }
+
+    pub fn ferris_spawns(&self) -> Vec<Transform> {
+        let mut spawns = Vec::new();
+
+        for group in &self.ferris_spawn_groups {
+            for _ in 0..group.count {
+                spawns.push(group.transform.clone());
+            }
+        }
+
+        spawns
+    }
+
     pub fn static_scenes(&self) -> &[StaticScenePlacement] {
         &self.static_scenes
     }
@@ -49,6 +92,8 @@ impl LobbyLayout {
 struct LobbyLayoutFile {
     hero_spawns: Vec<TransformDef>,
     cash_register_spawns: Vec<TransformDef>,
+    paper_scatter_regions: Vec<ScatterRegionDef>,
+    ferris_spawn_groups: Vec<RepeatedTransformPlacementDef>,
     static_scenes: Vec<StaticScenePlacementDef>,
 }
 
@@ -64,6 +109,16 @@ impl From<LobbyLayoutFile> for LobbyLayout {
                 .cash_register_spawns
                 .into_iter()
                 .map(TransformDef::into_transform)
+                .collect(),
+            paper_scatter_regions: layout
+                .paper_scatter_regions
+                .into_iter()
+                .map(ScatterRegionDef::into_runtime)
+                .collect(),
+            ferris_spawn_groups: layout
+                .ferris_spawn_groups
+                .into_iter()
+                .map(RepeatedTransformPlacementDef::into_runtime)
                 .collect(),
             static_scenes: layout
                 .static_scenes
@@ -84,6 +139,38 @@ impl StaticScenePlacementDef {
     fn into_runtime(self) -> StaticScenePlacement {
         StaticScenePlacement {
             scene_path: self.scene_path,
+            transform: self.transform.into_transform(),
+        }
+    }
+}
+
+#[derive(Deserialize)]
+struct ScatterRegionDef {
+    count: usize,
+    min: Vec3Def,
+    max: Vec3Def,
+}
+
+impl ScatterRegionDef {
+    fn into_runtime(self) -> ScatterRegion {
+        ScatterRegion {
+            count: self.count,
+            min: self.min.into_vec3(),
+            max: self.max.into_vec3(),
+        }
+    }
+}
+
+#[derive(Deserialize)]
+struct RepeatedTransformPlacementDef {
+    count: usize,
+    transform: TransformDef,
+}
+
+impl RepeatedTransformPlacementDef {
+    fn into_runtime(self) -> RepeatedTransformPlacement {
+        RepeatedTransformPlacement {
+            count: self.count,
             transform: self.transform.into_transform(),
         }
     }
@@ -139,6 +226,14 @@ fn unit_scale() -> Vec3Def {
         x: 1.0,
         y: 1.0,
         z: 1.0,
+    }
+}
+
+fn sample_component(min: f32, max: f32) -> f32 {
+    if (max - min).abs() <= f32::EPSILON {
+        min
+    } else {
+        rand::random_range(min..max)
     }
 }
 

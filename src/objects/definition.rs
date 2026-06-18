@@ -1,5 +1,9 @@
 use bevy::prelude::*;
 
+/// Add this struct onto an object if it is interactable
+/// The value of the field is a function defining the
+/// logic that should run when this object is clicked
+/// by the hero
 #[derive(Component, Clone, Copy)]
 pub struct Interactable {
     pub on_click: fn(&mut World, Entity),

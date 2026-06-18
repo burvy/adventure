@@ -1,6 +1,7 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+use crate::build::layout::LobbyLayout;
 use crate::objects;
 
 #[derive(Resource)]
@@ -44,14 +45,10 @@ impl objects::definition::ObjectBlueprint for Paper {
     }
 }
 
-pub fn initialize_papers(mut cmds: Commands, paper: Res<Paper>) {
+pub fn initialize_papers(mut cmds: Commands, paper: Res<Paper>, lobby_layout: Res<LobbyLayout>) {
     objects::definition::spawn_many(
         &mut cmds,
         paper.as_ref(),
-        (0..50).map(|_| Vec3 {
-            x: rand::random_range(-25.0..25.0),
-            y: 0.0,
-            z: rand::random_range(-25.0..25.0),
-        }),
+        lobby_layout.sample_paper_spawns(),
     );
 }

@@ -10,6 +10,22 @@
             rotation_degrees: (x: 0.0, y: 90.0, z: 0.0),
         ),
     ],
+    paper_scatter_regions: [
+        (
+            count: 50,
+            min: (x: -25.0, y: 0.0, z: -25.0),
+            max: (x: 25.0, y: 0.0, z: 25.0),
+        ),
+    ],
+    ferris_spawn_groups: [
+        (
+            count: 10,
+            transform: (
+                translation: (x: 0.0, y: 20.0, z: 0.0),
+                scale: (x: 0.15, y: 0.15, z: 0.15),
+            ),
+        ),
+    ],
     static_scenes: [
         (
             scene_path: "models/map/worlde.glb#Scene0",

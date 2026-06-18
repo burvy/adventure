@@ -3,6 +3,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::almighty::definition::WantMove;
+use crate::build::layout::LobbyLayout;
 use crate::objects::{self, ferris::logic};
 
 #[derive(Event)]
@@ -57,10 +58,11 @@ impl objects::definition::ObjectBlueprint for Ferris {
     }
 }
 
-pub fn spawn_ferrises(_event: On<SpawnFerrisesEvent>, mut cmds: Commands, ferris: Res<Ferris>) {
-    objects::definition::spawn_many(
-        &mut cmds,
-        ferris.as_ref(),
-        (0..10).map(|_| Transform::from_xyz(0.0, 20.0, 0.0).with_scale(Vec3::splat(0.15))),
-    );
+pub fn spawn_ferrises(
+    _event: On<SpawnFerrisesEvent>,
+    mut cmds: Commands,
+    ferris: Res<Ferris>,
+    lobby_layout: Res<LobbyLayout>,
+) {
+    objects::definition::spawn_many(&mut cmds, ferris.as_ref(), lobby_layout.ferris_spawns());
 }
