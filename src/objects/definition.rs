@@ -25,11 +25,11 @@ pub fn spawn_object<T: ObjectBlueprint>(
     T::spawn(cmds, blueprint, config)
 }
 
-pub fn spawn_many<T, I>(cmds: &mut Commands, blueprint: &T, configs: I)
-where
-    T: ObjectBlueprint,
-    I: IntoIterator<Item = T::SpawnConfig>,
-{
+pub fn spawn_many<T: ObjectBlueprint>(
+    cmds: &mut Commands,
+    blueprint: &T,
+    configs: impl IntoIterator<Item = T::SpawnConfig>,
+) {
     for config in configs {
         spawn_object::<T>(cmds, blueprint, config);
     }
