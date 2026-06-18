@@ -1,6 +1,8 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+use crate::objects;
+
 /// Event to spawn a cube easily
 /// Just do
 #[derive(Event)]
@@ -42,18 +44,22 @@ impl FromWorld for Oube {
     }
 }
 
-/// Spawns a rigidbody cube at these coordinates.
-pub fn spawn_oube(cmds: &mut Commands, oube: &Oube, pos: Vec3) {
-    cmds.spawn((
-        Mesh3d(oube.mesh.clone()),
-        MeshMaterial3d(oube.mats.clone()),
-        Transform::from_xyz(pos.x, pos.y + 2.0, pos.z),
-        Collider::cuboid(2.0, 2.0, 2.0),
-        RigidBody::Dynamic,
-    ));
+impl objects::definition::ObjectBlueprint for Oube {
+    type SpawnConfig = Vec3;
+
+    fn spawn(cmds: &mut Commands, oube: &Self, pos: Self::SpawnConfig) -> Entity {
+        cmds.spawn((
+            Mesh3d(oube.mesh.clone()),
+            MeshMaterial3d(oube.mats.clone()),
+            Transform::from_xyz(pos.x, pos.y + 2.0, pos.z),
+            Collider::cuboid(2.0, 2.0, 2.0),
+            RigidBody::Dynamic,
+        ))
+        .id()
+    }
 }
 
 /// Spawns a cube through SpawnCubeEvent.
 pub fn spawn_physics_cube(event: On<SpawnCubeEvent>, mut cmds: Commands, oube: Res<Oube>) {
-    spawn_oube(&mut cmds, &oube, event.position);
+    objects::definition::spawn_object::<Oube>(&mut cmds, &oube, event.position);
 }

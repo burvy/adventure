@@ -1,6 +1,8 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+use crate::objects;
+
 #[derive(Resource)]
 pub struct Paper {
     pub mesh: Handle<Mesh>,
@@ -27,27 +29,29 @@ impl FromWorld for Paper {
     }
 }
 
-// Paper builder
-pub fn build_papers(cmds: &mut Commands, paper: &Paper, pos: Vec3) {
-    cmds.spawn((
-        Mesh3d(paper.mesh.clone()),
-        MeshMaterial3d(paper.mats.clone()),
-        Transform::from_xyz(pos.x, pos.y + 2.5, pos.z),
-        Collider::cuboid(paper.size.x, paper.size.y, paper.size.z),
-        RigidBody::Dynamic,
-    ));
+impl objects::definition::ObjectBlueprint for Paper {
+    type SpawnConfig = Vec3;
+
+    fn spawn(cmds: &mut Commands, paper: &Self, pos: Self::SpawnConfig) -> Entity {
+        cmds.spawn((
+            Mesh3d(paper.mesh.clone()),
+            MeshMaterial3d(paper.mats.clone()),
+            Transform::from_xyz(pos.x, pos.y + 2.5, pos.z),
+            Collider::cuboid(paper.size.x, paper.size.y, paper.size.z),
+            RigidBody::Dynamic,
+        ))
+        .id()
+    }
 }
 
 pub fn initialize_papers(mut cmds: Commands, paper: Res<Paper>) {
-    (0..50).for_each(|_| {
-        build_papers(
-            &mut cmds,
-            &paper,
-            Vec3 {
-                x: rand::random_range(-25.0..25.0),
-                y: 0.0,
-                z: rand::random_range(-25.0..25.0),
-            },
-        )
-    });
+    objects::definition::spawn_many(
+        &mut cmds,
+        paper.as_ref(),
+        (0..50).map(|_| Vec3 {
+            x: rand::random_range(-25.0..25.0),
+            y: 0.0,
+            z: rand::random_range(-25.0..25.0),
+        }),
+    );
 }

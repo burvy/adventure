@@ -4,6 +4,7 @@ pub struct HeroPlugin;
 
 impl Plugin for HeroPlugin {
     fn build(&self, app: &mut App) {
+        app.init_resource::<definition::HeroAssets>();
         app.add_systems(
             Update,
             (
