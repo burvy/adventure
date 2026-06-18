@@ -1,0 +1,21 @@
+(
+    hero_spawns: [
+        (
+            translation: (x: 0.0, y: 67.0, z: 0.0),
+        ),
+    ],
+    cash_register_spawns: [
+        (
+            translation: (x: 4.5, y: 1.25, z: 23.0),
+            rotation_degrees: (x: 0.0, y: 90.0, z: 0.0),
+        ),
+    ],
+    static_scenes: [
+        (
+            scene_path: "models/map/worlde.glb#Scene0",
+            transform: (
+                translation: (x: 0.0, y: 0.0, z: 0.0),
+            ),
+        ),
+    ],
+)
