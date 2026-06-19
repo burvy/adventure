@@ -17,6 +17,8 @@ pub struct Hero {
     pub pitch: f32,
     /// Yaw rotation value of the hero to be applied to HeroCamera.
     pub yaw: f32,
+    /// Score of the player, must be an integer 0 or above
+    pub score: u32,
 }
 
 /// Tag the camera
@@ -114,6 +116,7 @@ impl objects::definition::ObjectBlueprint for HeroAssets {
                 sens: Vec2 { x: 0.01, y: 0.01 },
                 pitch: 0.0,
                 yaw: 0.0,
+                score: 0,
             },
             ShapeCaster::new(
                 Collider::capsule(0.49, 1.79),
