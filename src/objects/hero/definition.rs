@@ -21,6 +21,9 @@ pub struct Hero {
     pub score: u32,
 }
 
+#[derive(Event)]
+pub struct AddScore(pub u32);
+
 /// Tag the camera
 #[derive(Component)]
 pub struct HeroCamera;

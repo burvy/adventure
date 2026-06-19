@@ -15,6 +15,7 @@ impl Plugin for HeroPlugin {
                 control::update_camera.after(control::read_camera),
             ),
         );
+        app.add_observer(logic::add_score);
     }
 }
 

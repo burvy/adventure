@@ -3,6 +3,12 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::build::build_cube;
+use crate::objects::hero::definition;
+
+pub fn add_score(trigger: On<definition::AddScore>, mut hero: Single<&mut definition::Hero>) {
+    hero.score += trigger.event().0;
+    info!("Hero Score is now {}", hero.score);
+}
 
 /// Stuff to run when left clicks are detected.
 pub fn on_click(
