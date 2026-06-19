@@ -9,11 +9,11 @@ use trig_const::cos;
 /// Jumping velocity impulse.
 const JUMP_STRENGTH: f32 = 10.0;
 
-/// The angle between the player and the ground that jumping should be possible at
-const VALID_JUMP_ANGLE: f64 = std::f64::consts::FRAC_PI_3;
+/// The angle between the entity and the ground that jumping should be possible at
+const JUMP_ANGLE_RAW: f64 = std::f64::consts::FRAC_PI_3;
 
 /// Valid jump angle but cosined
-const VALID_JUMP_ANGLE_COS: f32 = cos(VALID_JUMP_ANGLE) as f32;
+const JUMP_ANGLE: f32 = cos(JUMP_ANGLE_RAW) as f32;
 
 /// Fulfill the movement wants of all entities and move them by applying velocity.
 pub fn move_all(query: Query<(&mut WantMove, &mut LinearVelocity)>) {
@@ -30,8 +30,9 @@ pub fn validate_jump(collisions: &ShapeHits) -> bool {
     // iterate through the collisions list and find any valid hit, returns boolean
     collisions.iter().any(|hit| {
         // hit.normal2 is negative to flip the normal around towards the player
-        // normal2 is the ground, check if the normal is 45 degrees to player, then it is walkable
-        -hit.normal2.y >= VALID_JUMP_ANGLE_COS
+        // normal2 is the ground, check if the normal is JUMP_ANGLE degrees to player or lower,
+        // then it is walkable
+        -hit.normal2.y >= JUMP_ANGLE
     })
 }
 /// Set things visible or invisible based on the custom visibility tag

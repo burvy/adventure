@@ -13,8 +13,8 @@
     paper_scatter_regions: [
         (
             count: 50,
-            min: (x: -25.0, y: 0.0, z: -25.0),
-            max: (x: 25.0, y: 0.0, z: 25.0),
+            min: (x: -25.0, y: 25.0, z: -25.0),
+            max: (x: 25.0, y: 25.0, z: 25.0),
         ),
     ],
     ferris_spawn_groups: [

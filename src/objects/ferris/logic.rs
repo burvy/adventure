@@ -34,7 +34,6 @@ pub fn update_ferris(
         if pdir.length_squared() <= 16.0 {
             wm.zinput = 0;
             wm.xinput = 0;
-            // TODO: detect grounded before jumping
             if almighty::logic::validate_jump(sh) {
                 wm.jump = true;
             }

@@ -1,8 +1,10 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+use super::logic;
 use crate::build::layout::LobbyLayout;
 use crate::objects;
+use crate::objects::definition::Interactable;
 
 #[derive(Resource)]
 pub struct Paper {
@@ -13,9 +15,14 @@ pub struct Paper {
 
 impl FromWorld for Paper {
     fn from_world(world: &mut World) -> Self {
+        let size = Vec3 {
+            x: 1.0,
+            y: 2.0,
+            z: 0.25,
+        };
         let mesh = {
             let mut mesh_assets = world.resource_mut::<Assets<Mesh>>();
-            mesh_assets.add(Cuboid::new(2.0, 4.0, 0.5))
+            mesh_assets.add(Cuboid::new(size.x, size.y, size.z))
         };
         let mats = {
             let mut material_assets = world.resource_mut::<Assets<StandardMaterial>>();
@@ -25,7 +32,7 @@ impl FromWorld for Paper {
         Self {
             mesh,
             mats,
-            size: Vec3::new(2.0, 4.0, 0.5),
+            size: Vec3::new(size.x, size.y, size.z),
         }
     }
 }
@@ -38,8 +45,12 @@ impl objects::definition::ObjectBlueprint for Paper {
             Mesh3d(paper.mesh.clone()),
             MeshMaterial3d(paper.mats.clone()),
             Transform::from_xyz(pos.x, pos.y + 2.5, pos.z),
-            Collider::cuboid(paper.size.x, paper.size.y, paper.size.z),
+            Collider::cuboid(paper.size.x, paper.size.y * 2.0, paper.size.z),
+            Interactable {
+                on_click: logic::paper_interaction,
+            },
             RigidBody::Dynamic,
+            LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
         ))
         .id()
     }

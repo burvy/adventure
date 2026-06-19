@@ -17,11 +17,14 @@ pub struct Ferris {
 
 impl FromWorld for Ferris {
     fn from_world(world: &mut World) -> Self {
-        let asset_server = world.resource::<AssetServer>();
+        // used .clone to bypass the borrow checker here to add mesh and mats, change later if desired
+        let asset_server = world.resource::<AssetServer>().clone();
+
+        let bounds = Vec3::new(10.0, 10.0, 10.0);
 
         Self {
             scene: asset_server.load("models/crab.glb#Scene0"),
-            bounds: Vec3::new(3.0, 2.0, 3.0),
+            bounds: bounds,
         }
     }
 }
@@ -31,7 +34,7 @@ impl objects::definition::ObjectBlueprint for Ferris {
 
     fn spawn(cmds: &mut Commands, ferris: &Self, transform: Self::SpawnConfig) -> Entity {
         cmds.spawn((
-            SceneRoot(ferris.scene.clone()),
+            // The root entity holds the collider, physics, and main position
             Collider::cuboid(ferris.bounds.x, ferris.bounds.y, ferris.bounds.z),
             transform,
             Visibility::default(),
@@ -54,6 +57,12 @@ impl objects::definition::ObjectBlueprint for Ferris {
             )
             .with_max_distance(1.0),
         ))
+        .with_children(|parent| {
+            parent.spawn((
+                SceneRoot(ferris.scene.clone()),
+                Transform::from_xyz(0.0, -6.7, 0.0),
+            ));
+        })
         .id()
     }
 }

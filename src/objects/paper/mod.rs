@@ -10,3 +10,4 @@ impl Plugin for PaperPlugin {
 }
 
 pub mod definition;
+pub mod logic;
