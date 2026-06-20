@@ -9,3 +9,8 @@ pub struct WantMove {
     pub forward: Vec3,
     pub move_speed: f32,
 }
+
+#[derive(Event)]
+pub struct Boing {
+    pub jumper: Entity,
+}

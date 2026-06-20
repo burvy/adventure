@@ -8,6 +8,11 @@ pub struct CashRegisterAssets {
     scene: Handle<Scene>,
 }
 
+#[derive(Event)]
+pub struct Kaching {
+    pub register: Entity,
+}
+
 impl FromWorld for CashRegisterAssets {
     fn from_world(world: &mut World) -> Self {
         let asset_server = world.resource::<AssetServer>();

@@ -69,6 +69,7 @@ impl objects::definition::ObjectBlueprint for HeroAssets {
                     HeroCamera,
                     Camera3d::default(),
                     Transform::from_xyz(0.0, 1.6, 0.0),
+                    SpatialListener::new(1.0),
                     children![
                         (
                             RayCaster::new(Vec3::ZERO, Dir3::NEG_Z),

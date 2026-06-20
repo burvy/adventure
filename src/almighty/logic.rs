@@ -1,6 +1,7 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+use crate::almighty::definition::Boing;
 use crate::almighty::definition::WantMove;
 use crate::objects;
 
@@ -16,12 +17,14 @@ const JUMP_ANGLE_RAW: f64 = std::f64::consts::FRAC_PI_3;
 const JUMP_ANGLE: f32 = cos(JUMP_ANGLE_RAW) as f32;
 
 /// Fulfill the movement wants of all entities and move them by applying velocity.
-pub fn move_all(query: Query<(&mut WantMove, &mut LinearVelocity)>) {
-    for (mut des, mut velocity) in query {
+pub fn move_all(mut cmds: Commands, query: Query<(Entity, &mut WantMove, &mut LinearVelocity)>) {
+    for (entity, mut des, mut velocity) in query {
         *velocity = LinearVelocity((local_dir(&des) * get_speed(&des)).with_y(velocity.y));
         if des.jump {
             des.jump = false;
             velocity.y = JUMP_STRENGTH;
+            // trigger the boing sound and hopefully we know where this entity is too
+            cmds.trigger(Boing { jumper: entity });
         }
     }
 }
@@ -56,4 +59,25 @@ fn local_dir(want_move: &WantMove) -> Vec3 {
 /// Returns the movement speed specified by WantMove for horizontal movement.
 fn get_speed(want_move: &WantMove) -> f32 {
     want_move.move_speed
+}
+
+pub fn on_jump_sound(
+    trigger: On<Boing>,
+    asset_server: Res<AssetServer>,
+    mut cmds: Commands,
+    transforms: Query<&Transform>,
+) {
+    let boing_handle = asset_server.load("sounds/boing.wav");
+
+    let jump_event = trigger.event();
+    let position = transforms
+        .get(jump_event.jumper)
+        .cloned()
+        .unwrap_or_default();
+
+    cmds.spawn((
+        AudioPlayer::new(boing_handle),
+        PlaybackSettings::DESPAWN.with_spatial(true),
+        position,
+    ));
 }
