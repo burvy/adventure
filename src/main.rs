@@ -16,14 +16,14 @@ use bevy::window::WindowResolution;
 
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::render::{
-    RenderPlugin,
     settings::{Backends, WgpuSettings, WgpuSettingsPriority},
+    RenderPlugin,
 };
 use bevy_embedded_assets::EmbeddedAssetPlugin;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy_remote::{
+    http::{RemoteHttpPlugin, DEFAULT_PORT},
     RemotePlugin,
-    http::{DEFAULT_PORT, RemoteHttpPlugin},
 };
 
 fn main() -> AppExit {
@@ -78,6 +78,7 @@ fn main() -> AppExit {
 pub struct MainPlugin;
 impl Plugin for MainPlugin {
     fn build(&self, app: &mut App) {
+        app.insert_resource(ClearColor(Color::srgb(0.5, 0.8, 0.95)));
         app.add_plugins(PhysicsPlugins::default());
         app.add_plugins((BuildPlugin, ObjectsPlugin, AlmightyPlugin));
         app.insert_resource(Gravity(Vec3::NEG_Y * 30.0));

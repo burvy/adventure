@@ -22,6 +22,7 @@ pub fn on_click(world: &mut World, register: Entity) {
     world.trigger(ferris::definition::SpawnFerrisesEvent);
 }
 
+// TODO: More generic interface for sounds
 /// Kaching sound
 /// Mirrors `on_jump_sound` in almighty\logic.rs
 pub fn on_kaching(

@@ -20,7 +20,7 @@ impl FromWorld for Ferris {
         // used .clone to bypass the borrow checker here to add mesh and mats, change later if desired
         let asset_server = world.resource::<AssetServer>().clone();
 
-        let bounds = Vec3::new(10.0, 10.0, 10.0);
+        let bounds = Vec3::new(15.0, 10.0, 15.0);
 
         Self {
             scene: asset_server.load("models/crab.glb#Scene0"),
