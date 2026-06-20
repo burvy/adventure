@@ -31,13 +31,10 @@ pub fn update_ferris(
         let mut pdir = ttf.translation - ftf.translation;
         pdir.y = 0.0;
 
-        if pdir.length_squared() <= 16.0 {
-            wm.zinput = 0;
-            wm.xinput = 0;
+        if pdir.length_squared() <= 64.0 {
             if almighty::logic::validate_jump(sh) {
                 wm.jump = true;
             }
-            return;
         }
 
         let pdir = pdir.normalize();
